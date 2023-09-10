@@ -18,34 +18,34 @@ export default function Experience() {
   switch (statButton) {
     case 'softdev':
       icons = [
-        <BiLogoPython size={50} />,
-        <TbBrandCpp size={50} />,
+        <BiLogoPython key={'python'} size={50} />,
+        <TbBrandCpp key={'cpp'} size={50} />,
       ];
       break;
     case 'webdev':
       icons = [
-        <DiCss3Full size={50} />,
-        <BiLogoPhp size={50} />,
-        <SiExpress size={50} />,
-        <SiMongodb size={50} />,
-        <SiMysql size={50} />,
-        <TbJson size={50} />,
-        <AiFillHtml5 size={50} />,
-        <BiLogoReact size={50} />,
+        <DiCss3Full key={'css'} size={50} />,
+        <BiLogoPhp key={'php'} size={50} />,
+        <SiExpress key={'express'} size={50} />,
+        <SiMongodb key={'mongodb'} size={50} />,
+        <SiMysql key={'sql'} size={50} />,
+        <TbJson key={'json'} size={50} />,
+        <AiFillHtml5 key={'html'} size={50} />,
+        <BiLogoReact key={'react'} size={50} />,
         <IoLogoJavascript size={50} />,
-        <SiNextdotjs size={50} />,
-        <SiChakraui size={50} />,
-        <DiNodejs size={50} />,
-        <BiLogoTailwindCss size={50} />
+        <SiNextdotjs key={'next'} size={50} />,
+        <SiChakraui key={'chakra'} size={50} />,
+        <DiNodejs key={'nodejs'} size={50} />,
+        <BiLogoTailwindCss key={'tailwind'} size={50} />
       ];
       break;
     case 'ca':
       icons = [
-        <BiLogoAws size={50} />,
-        <BiLogoGoogleCloud size={50} />,
-        <SiMicrosoftazure size={50} />,
-        <SiReplit size={50} />,
-        <DiHeroku size={50} />        
+        <BiLogoAws key={'aws'} size={50} />,
+        <BiLogoGoogleCloud key={'gcloud'} size={50} />,
+        <SiMicrosoftazure key={'azure'} size={50} />,
+        <SiReplit key={'replit'} size={50} />,
+        <DiHeroku key={'heroku'} size={50} />        
       ];
       break;
     default:

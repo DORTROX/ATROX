@@ -32,7 +32,7 @@ export default function Experience() {
         <TbJson key={'json'} size={50} />,
         <AiFillHtml5 key={'html'} size={50} />,
         <BiLogoReact key={'react'} size={50} />,
-        <IoLogoJavascript size={50} />,
+        <IoLogoJavascript key={'js'} size={50} />,
         <SiNextdotjs key={'next'} size={50} />,
         <SiChakraui key={'chakra'} size={50} />,
         <DiNodejs key={'nodejs'} size={50} />,

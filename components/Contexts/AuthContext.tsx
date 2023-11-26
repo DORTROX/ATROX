@@ -36,6 +36,7 @@ export const AuthStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         // })
         const response = await axios.get("api/token");
         const userData = response.data.user;
+        console.log(userData)
         if (userData) {
           setUser(userData);
           setLoading(false);

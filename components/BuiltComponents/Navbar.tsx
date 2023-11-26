@@ -36,29 +36,13 @@ import Image from "next/image";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ThemeSwitcher from "@/components/BuiltComponents/ThemeSwitcher";
-
-const frameworks = [
-  {
-    value: "Akshat Rana",
-    label: "Akshat Rana",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { signIn, signOut } from "next-auth/react";
+import { useAuth } from "../Contexts/AuthContext";
+interface User {
+  Name: string;
+  Image: string;
+  Token: string;
+}
 
 export function Navbar() {
   return (
@@ -70,7 +54,7 @@ export function Navbar() {
         <GettingStartedMenuDesktop />
         <SearchBar />
       </div>
-      <div className='block: md:hidden'>
+      <div className='block md:hidden'>
         <Sheet>
           <SheetTrigger>
             <Menu />
@@ -91,12 +75,12 @@ export function Navbar() {
                             className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
                             href='/'>
                             {/* <Icons.logo className="h-6 w-6" /> */}
-                            <Image className='bg-black p-2 rounded-full' src={"/AtroxLogo.png"} alt='Atrox Logo' width={100} height={100} />
+                            <Image className='bg-black p-2 rounded-full m-auto' src={"/AtroxLogo.png"} alt='Atrox Logo' width={100} height={100} />
                             <div className='mb-2 mt-4 text-lg font-medium'>ATROX</div>
                             <p className='text-sm leading-tight text-muted-foreground'>Tech Community by Kaizen Dev</p>
                           </a>
                         </li>
-                        <ListItem2 href='/AboutMe' title="Who am I?"  >
+                        <ListItem2 href='/AboutMe' title='Who am I?'>
                           Curious to know about me? Well dont be disappointed.
                         </ListItem2>
                         <ListItem2 href='/docs/installation' title='Mechanism'>
@@ -129,11 +113,13 @@ function SearchBar() {
 }
 
 function ProfileSetting() {
+  const { user } = useAuth();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar>
-          <AvatarImage src='https://github.com/shadcn.png' />
+          <AvatarImage src={user?.Image || "https://github.com/shadcn.png"} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -182,10 +168,22 @@ function ProfileSetting() {
         <DropdownMenuItem>Support</DropdownMenuItem>
         <DropdownMenuItem disabled>API</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        {user ? (
+          <>
+            <DropdownMenuItem onClick={() => signOut()}>Log Out</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                signIn("google");
+              }}>
+              Add Account
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem onClick={() => signIn("google")}>
+            Log In
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -230,13 +228,42 @@ function GettingStartedMenuDesktop() {
 
 function ProfileSelector() {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const { Users, user } = useAuth();
+  const [value, setValue] = React.useState<string | undefined>();
+  React.useEffect(() => {
+    if (!user && !Users) return;
+    const defaultUser = Users.find((u) => u.Name === user?.Name) ? user?.Name : Users[0]?.Name;
+    setValue(defaultUser);
+  }, [Users, user]);
 
+  async function switchDispacth(token: string) {
+    console.log(token)
+    await fetch("api/SwitchAccount", {
+      body: JSON.stringify({ token }),
+      method: "POST",
+    }).then(async (res) => {
+      const x = await res.json();
+      if (x === "OK") {
+        window.location.reload();
+      }
+    });
+  }
+  async function Switch(Name: string) {
+    setValue(Name);
+    setOpen(false);
+    const UsersString = localStorage.getItem("Users");
+    const UsersArray: User[] = UsersString ? JSON.parse(UsersString) : [];
+    UsersArray.map((user) => {
+      if (user.Name === Name) {
+        switchDispacth(user.Token)
+      }
+    });
+  }
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='outline' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
-          {value ? frameworks.find((framework) => framework.value === value)?.label : "DORTROX"}
+          {value ? value : user?.Name}
           <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -245,7 +272,17 @@ function ProfileSelector() {
           <CommandInput placeholder='Search Account' className='h-9' />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {Users.map((user) => (
+              <CommandItem
+                key={user.Name}
+                onSelect={() => {
+                  Switch(user.Name);
+                }}>
+                {user.Name}
+                <CheckIcon className={cn("ml-auto h-4 w-4", value === user.Name ? "opacity-100" : "opacity-0")} />
+              </CommandItem>
+            ))}
+            {/* {frameworks.map((framework) => (
               <CommandItem
                 key={framework.value}
                 onSelect={(currentValue) => {
@@ -255,7 +292,7 @@ function ProfileSelector() {
                 {framework.label}
                 <CheckIcon className={cn("ml-auto h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
               </CommandItem>
-            ))}
+            ))} */}
           </CommandGroup>
         </Command>
       </PopoverContent>
@@ -302,5 +339,6 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
     );
   }
 );
+
 ListItem.displayName = "ListItem";
 ListItem2.displayName = "ListItem2";

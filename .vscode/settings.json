@@ -1,4 +1,7 @@
 {
     "appService.defaultWebAppToDeploy": "/subscriptions/295b4a26-f6e7-4afe-bd54-4bf6fc2e3134/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/ATROX",
-    "appService.deploySubpath": "."
+    "appService.deploySubpath": ".",
+    "search.exclude": {
+        "**/node_modules": false
+    }
 }

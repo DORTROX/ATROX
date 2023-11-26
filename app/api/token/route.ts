@@ -1,5 +1,5 @@
 import { getToken } from "next-auth/jwt";
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest } from "next";
 
 export async function GET(req: NextApiRequest) {
   const token = await getToken({ req });

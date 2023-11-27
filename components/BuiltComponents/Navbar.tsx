@@ -237,7 +237,6 @@ function ProfileSelector() {
   }, [Users, user]);
 
   async function switchDispacth(token: string) {
-    console.log(token)
     await fetch("api/SwitchAccount", {
       body: JSON.stringify({ token }),
       method: "POST",

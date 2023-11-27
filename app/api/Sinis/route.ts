@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const {Name} = await req.json();
   const res = new NextResponse();
-  const x = getCookie('next-auth.session-token', { res, req });
+  const x = getCookie('__Secure-next-auth.session-token', { res, req });
   await Mongo();
   const user = await User.findOne({ Name: Name });
   if (user)  {

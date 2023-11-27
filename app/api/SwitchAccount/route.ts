@@ -11,7 +11,9 @@ export async function POST(req: NextRequest) {
   );
   response.cookies.set({
     name: "__Secure-next-auth.session-token",
-    value: token
+    value: token,
+    httpOnly: true,
+    secure: true
   })
   return response
 }
